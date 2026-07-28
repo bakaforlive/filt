@@ -10,83 +10,58 @@ const
 // Prints help documentation
 procedure helpDocs;
 begin
-        writeln('CLI - a program-filter.', #10, 'Parameters', #10, 'seek - SEEK for a specified characters.', #10#9, 'digits', #10#9, 'letters', #10#9, 'spaces', #10#9, 'capital-letters', #10#9, 'lowercase-letters', #10#10, 'change - CHANGE the format.', #10#9, 'letters-lower - formats any capital letters to lower.', #10#9, 'letters-upper - vice versa. Formats any lowercase letters to uppercase.');
+        writeln('FILT - a program-filter.', #10, 'Parameters', #10, 'seek - SEEK for a specified characters.', #10#9, 'digits', #10#9, 'letters', #10#9, 'spaces', #10#9, 'capital-letters', #10#9, 'lowercase-letters', #10#9, 'punctuation', #10#10, 'change - CHANGE the format.', #10#9, 'letters-lower - formats any capital letters to lower.', #10#9, 'letters-upper - vice versa. Formats any lowercase letters to uppercase.');
         halt(0)
 end;
 
 // 'seek param' functions
 procedure seekDigits(var ch: char; var isPrint: boolean);
 begin
-	if (ch >= '0') and (ch <= '9') then
-		isPrint := true
-	else
-		isPrint := false
+	isPrint := ch in ['0'..'9']
 end;
 
 procedure seekLetters(var ch: char; var isPrint: boolean);
 begin
-	if (((ch >= 'a') and (ch <= 'z'))) or (((ch >= 'A') and (ch <= 'Z'))) then
-		isPrint := true
-	else
-		isPrint := false
+	isPrint := (ch in ['a'..'z']) or (ch in ['A'..'Z']);
 end;
 
 procedure seekSpaces(var ch: char; var isPrint: boolean);
 begin
-	if (ord(ch) <= 32) then
-		isPrint := true
-	else
-		isPrint := false
+	isPrint := ord(ch) <= 32
 end;
 
 procedure seekUppercase(var ch: char; var isPrint: boolean);
 begin
-	if ((ch >= 'A') and (ch <= 'Z')) then
-		isPrint := true
-	else
-		isPrint := false
-
+	isPrint := ch in ['A'..'Z']
 end;
 
 procedure seekLowercase(var ch: char; var isPrint: boolean);
 begin
-	if ((ch >= 'a') and (ch <= 'z')) then
-		isPrint := true
-	else
-		isPrint := false
+	isPrint := ch in ['a'..'z']
+end;
 
+procedure seekPunctuation(var ch: char; var isPrint: boolean);
+begin
+	isPrint := ch in ['!'..'/', ':'..'@', '['..'`', '{'..'~'] // special and punctuation characters
 end;
 
 // 'change param' functions
-procedure toUpperCase(var ch: char; var isChange: boolean; var elseChange: boolean); // toUpperCase(ch, isChange, elseChange)
+procedure toUpperCase(var ch: char; var isChange: boolean);
 begin
 	if ch in ['a'..'z'] then
 	begin
         	ch := chr(ord(ch) - LOWER_UPPERCASE_DIFF);
-		isChange := true;
-		elseChange := false
-	end
-	else 
-	begin
-		isChange := false;
-		elseChange := true
 	end;
+	isChange := true;
 end;
 
-procedure toLowerCase(var ch: char; var isChange: boolean; var elseChange: boolean);
+procedure toLowerCase(var ch: char; var isChange: boolean);
 begin
 	if ch in ['A'..'Z'] then
 	begin
         	ch := chr(ord(ch) + LOWER_UPPERCASE_DIFF);
-		isChange := true;
-		elseChange := false
-	end
-	else
-	begin
-		isChange := false;
-		elseChange := true
 	end;
-   
+	isChange := true;
 end;
 
 
@@ -106,24 +81,26 @@ begin
                         seekUppercase(ch, isPrint);
                 'lowercase-letters':
                         seekLowercase(ch, isPrint);
+		'punctuation':
+			seekPunctuation(ch, isPrint);
                 else
                 begin
-                        writeln('[ERROR] Parameter ', ParamStr(2), ' not found! Type ''cli help'' for details.');
+                        writeln('[ERROR] Parameter ', ParamStr(2), ' not found! Type ''./filt help'' for details.');
                         halt(1)
 		end
 	end;
 end;
 
-procedure checkChangeParams(var ch: char; var isChange: boolean; var elseChange: boolean);
+procedure checkChangeParams(var ch: char; var isChange: boolean);
 begin
 	case ParamStr(2) of
 		'letters-upper':
-			toUpperCase(ch, isChange, elseChange);
+			toUpperCase(ch, isChange);
 		'letters-lower':
-			toLowerCase(ch, isChange, elseChange);
+			toLowerCase(ch, isChange);
 		else
                 begin
-                	writeln('[ERROR] Parameter ', ParamStr(2), ' not found! Type ''cli help'' for details.');
+                	writeln('[ERROR] Parameter ', ParamStr(2), ' not found! Type ''./filt help'' for details.');
                         halt(1)
                 end
 	end;
@@ -131,18 +108,18 @@ begin
 end;
 
 // 1 level procedure
-procedure checkParams(var ch: char; var isPrint: boolean; var isChange: boolean; var elseChange: boolean);
+procedure checkParams(var ch: char; var isPrint: boolean; var isChange: boolean);
 begin
 	case ParamStr(1) of
 		'seek':
 			checkSeekParams(ch, isPrint);
 		'change':
-			checkChangeParams(ch, isChange, elseChange);
+			checkChangeParams(ch, isChange);
 		'help':
 			helpDocs;
 		else
 		begin
-			writeln('[ERROR] Parameter ', ParamStr(1), ' not found! Type ''./cli help'' for details.');
+			writeln('[ERROR] Parameter ', ParamStr(1), ' not found! Type ''./filt help'' for details.');
 			halt(1)
 		end
 	end;
@@ -160,19 +137,19 @@ end;
 // main
 var
 	count: integer; // counts found characters (only for seek param)
-	isPrint, isChange, elseChange: boolean; // checks - 'I need to print/change char?'
+	isPrint, isChange: boolean; // checks - 'I need to print/change char?'
 	
 	ch: char;
 begin
 	count := 0;
-	isPrint := false;
-	isChange := false;
-	elseChange := false;
 
 	while not eof do
 	begin
+		isPrint := false;
+		isChange := false;
+
 		read(ch);
-		checkParams(ch, isPrint, isChange, elseChange);
+		checkParams(ch, isPrint, isChange);
 
 		if isPrint then
 		begin
@@ -182,8 +159,6 @@ begin
 
 		if isChange then
 			write(ch)
-		else if elseChange then
-			write(ch);
 		
 	end;
 	
