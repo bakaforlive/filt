@@ -25,6 +25,19 @@ fpc filt.pas
 
 Or you can install it [manually](https://www.freepascal.org/).
 
+## Parameters
+seek - SEEK for a specified characters.
+	digits
+	letters
+	spaces
+	capital-letters
+	lowercase-letters
+	punctuation
+
+change - CHANGE the format.
+	letters-lower - formats any capital letters to lower.
+	letters-upper - vice versa. Formats any lowercase letters to uppercase.
+
 ## Roadmap
 Currently, this project will get new features over time.
 
