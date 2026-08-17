@@ -115,8 +115,6 @@ begin
 			checkSeekParams(ch, isPrint);
 		'change':
 			checkChangeParams(ch, isChange);
-		'help':
-			helpDocs;
 		else
 		begin
 			writeln('[ERROR] Parameter ', ParamStr(1), ' not found! Type ''./filt help'' for details.');
@@ -141,6 +139,12 @@ var
 	
 	ch: char;
 begin
+    if ParamStr(1) = 'help' then
+    begin
+        helpDocs;
+        exit;
+    end;
+
 	count := 0;
 
 	while not eof do
@@ -149,7 +153,7 @@ begin
 		isChange := false;
 
 		read(ch);
-		checkParams(ch, isPrint, isChange);
+		checkParams(ch, isPrint, isChange); // take 'checkers' out of the cycle
 
 		if isPrint then
 		begin
