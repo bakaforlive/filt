@@ -1,5 +1,5 @@
 ## About
-Filt is a CLI text filter written in Pascal.
+Filt is a CLI text filter.
 
 ## Usage
 ```bash
@@ -12,18 +12,18 @@ $ ./filt {parameter 1} {parameter 2}
 ```
 
 ## Build
-To build filt, you need to install fpc (Free Pascal Compilator) with your package manager.
+To build filt, you need to install C compiler (e.g. clang, gcc) with your package manager.
 
 ```bash
 # Arch Linux
-sudo pacman -S fpc
+sudo pacman -S gcc
 
 git clone https://github.com/bakaforlive/filt.git
 cd filt
-fpc filt.pas
+gcc filt.c -o filt
 ```
 
-Or you can install it [manually](https://www.freepascal.org/).
+Or you can install it [manually](https://gcc.gnu.org/install/).
 
 ## Parameters
 seek - SEEK for a specified characters.
