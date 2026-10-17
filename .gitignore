@@ -1,0 +1,15 @@
+# Compiled Object and Unit files
+*.o
+*.ppu
+*.a
+*.or
+*.dbg
+*.compiled
+
+# Binaries / Executables
+*.exe
+*.dll
+*.so
+*.dylib
+*.app/
+
