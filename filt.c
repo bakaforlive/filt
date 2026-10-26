@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #define LOWER_UPPERCASE_DIFF 32
 
@@ -34,18 +35,6 @@ typedef enum {
 
 typedef int (*seek_func_t)(int);
 typedef void (*change_func_t)(int *);
-
-int strcmp_z(const char *str1, const char *str2) {
-    if (!str1) { return 0; }
-
-    for (int i = 0; str1[i]; i++) {
-        if (str1[i] != str2[i]) {
-            return 0; /* not equal */
-        }
-    }
-
-    return 1;
-}
 
 void help_docs() {
     puts("FILT - a program-filter.\n"
@@ -102,32 +91,32 @@ void to_lowercase(int *ch) {
 
 /* 2 level 'checkers' */
 param_t check_seek_params(char *arg2) {
-    if (strcmp_z(arg2, "digits")) {
+    if (strcmp(arg2, "digits") == 0) {
         return SEEK_DIGITS;
     }
-    if (strcmp_z(arg2, "letters")) {
+    if (strcmp(arg2, "letters") == 0) {
         return SEEK_LETTERS;
     }
-    if (strcmp_z(arg2, "spaces")) {
+    if (strcmp(arg2, "spaces") == 0) {
         return SEEK_SPACES;
     }
-    if (strcmp_z(arg2, "capital-letters")) {
+    if (strcmp(arg2, "capital-letters") == 0) {
         return SEEK_CAPITALS;
     }
-    if (strcmp_z(arg2, "lowercase-letters")) {
+    if (strcmp(arg2, "lowercase-letters") == 0) {
         return SEEK_LOWERCASE;
     }
-    if (strcmp_z(arg2, "punctuation")) {
+    if (strcmp(arg2, "punctuation") == 0) {
         return SEEK_PUNCTUATION;
     }
     return UNDEFINED;
 }
 
 param_t check_change_params(char *arg2) {
-    if (strcmp_z(arg2, "letters-upper")) {
+    if (strcmp(arg2, "letters-upper") == 0) {
         return CHANGE_UPPER;
     }
-    if (strcmp_z(arg2, "letters-lower")) {
+    if (strcmp(arg2, "letters-lower") == 0) {
         return CHANGE_LOWER;
     }
     return UNDEFINED;
@@ -136,11 +125,11 @@ param_t check_change_params(char *arg2) {
 /* 1 level 'checker' */
 param_t check_params(char *arg1, char *arg2) { 
     param_t result = UNDEFINED;
-    if (strcmp_z(arg1, SEEK)) {
+    if (strcmp(arg1, SEEK) == 0) {
         result = check_seek_params(arg2);
     }
 
-    if (strcmp_z(arg1, CHANGE)) {
+    if (strcmp(arg1, CHANGE) == 0) {
         result = check_change_params(arg2);
     }
     return result;
@@ -187,7 +176,7 @@ change_func_t define_change_func(param_t state) {
 }
 
 int main(int argc, char *argv[]) {
-    if (strcmp_z(argv[1], HELP)) {
+    if (argv[1] && strcmp(argv[1], HELP) == 0) {
         help_docs();
         return 0;
     }
